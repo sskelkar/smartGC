@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import request from 'request';
+import request from 'supertest';
 
 xit('Main page', (done) => {
-    request('http://localhost:4000', (error, res, body) => {
+    request('/', (error, res, body) => {
         expect(body).to.equal("Hello");
         done();
     });

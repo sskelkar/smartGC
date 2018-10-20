@@ -1,9 +1,7 @@
-import express from 'express';
 import GCRequest from './gcrequest.model';
-const router = express.Router();
 
 //db.gcrequests.aggregate([{$project:{year: {$year: "$pickUpTime"}}},{$match:{year:{$gte:2018}}}])
-router.get('/pickup/today', (req, res, next) => {
+export const getPickUpRequests = (req, res, next) => {
     GCRequest.aggregate()
         .project({
             year: { $year: "$pickUpTime" }
@@ -16,13 +14,15 @@ router.get('/pickup/today', (req, res, next) => {
             }
             res.send(result);
         })
-});
+};
 
-router.post('/pickup', (req, res, next) => {
+export const savePickUpRequest = (req, res, next) => {
     let gcrequest = new GCRequest({
         latitude: req.body.latitude,
         longitude: req.body.longitude,
-        pickUpTime: req.body.pickUpTime
+        locality: req.body.locality,
+        date: req.body.date,
+        shift: req.body.shift
     });
     
     gcrequest.save((err) => {
@@ -32,6 +32,4 @@ router.post('/pickup', (req, res, next) => {
         res.send('Product Created successfully');
     });
 
-});
-
-export default router;
+};

@@ -12,7 +12,9 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "mongoose": "^5.3.3"
+    "moment": "^2.22.2",
+    "mongoose": "^5.3.3",
+    "properties-reader": "0.0.16"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -21,7 +23,7 @@
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.4",
-    "request": "^2.88.0",
-    "sinon": "^6.3.5"
+    "sinon": "^6.3.5",
+    "supertest": "^3.3.0"
   }
 }
