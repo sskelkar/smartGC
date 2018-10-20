@@ -1,8 +1,8 @@
-import GCRequest from './gcrequest.model';
+import PickupRequest from './pickuprequest.model';
 
 //db.gcrequests.aggregate([{$project:{year: {$year: "$pickUpTime"}}},{$match:{year:{$gte:2018}}}])
 export const getPickUpRequests = (req, res, next) => {
-    GCRequest.aggregate()
+    PickupRequest.aggregate()
         .project({
             year: { $year: "$pickUpTime" }
         })
@@ -17,7 +17,7 @@ export const getPickUpRequests = (req, res, next) => {
 };
 
 export const savePickUpRequest = (req, res, next) => {
-    let gcrequest = new GCRequest({
+    let pickupRequest = new PickupRequest({
         latitude: req.body.latitude,
         longitude: req.body.longitude,
         locality: req.body.locality,
@@ -25,11 +25,10 @@ export const savePickUpRequest = (req, res, next) => {
         shift: req.body.shift
     });
     
-    gcrequest.save((err) => {
+    pickupRequest.save((err) => {
         if (err) {
             return next(err);
         }
-        res.send('Product Created successfully');
+        res.send('Garbage pickup request is successful');
     });
-
 };

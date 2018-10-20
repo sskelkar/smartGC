@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-let GCRequestSchema = mongoose.Schema({
+let PickupRequestSchema = mongoose.Schema({
     latitude: {type: Number, required: true},
     longitude: {type: Number, required: true},
     locality: {type: String, required: true},
@@ -9,5 +9,5 @@ let GCRequestSchema = mongoose.Schema({
 
 });
 
-const GCRequest = mongoose.model('GCRequest', GCRequestSchema);
-export default GCRequest;
+const PickupRequest = mongoose.model('PickupRequest', PickupRequestSchema);
+export default PickupRequest;

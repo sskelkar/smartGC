@@ -1,8 +1,8 @@
 import express from 'express';
-import {getPickUpRequests, savePickUpRequest} from './pickup/request/gcrequest.controller';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import PropertiesReader from 'properties-reader';
+import {getPickUpRequests, savePickUpRequest} from './pickup/request/pickuprequest.controller';
 import {getShifts} from "./pickup/schedule/shift.controller";
 
 const app = express();
