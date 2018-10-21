@@ -1,19 +1,15 @@
 import PickupRequest from './pickuprequest.model';
 
-//db.gcrequests.aggregate([{$project:{year: {$year: "$pickUpTime"}}},{$match:{year:{$gte:2018}}}])
-export const getPickUpRequests = (req, res, next) => {
-    PickupRequest.aggregate()
-        .project({
-            year: { $year: "$pickUpTime" }
-        })
-        .match({
-            year: { $gte: 2018 }
-        }).exec((err, result) => {
-            if (err) {
-                return next(err);
+export const getPickUpRequests = (date, shift, locations) => {
+    PickupRequest.aggregate([
+        {
+            $match: {
+                shift,
+                locality: {$in: locations},
+                date: new Date(date)
             }
-            res.send(result);
-        })
+        }
+    ]).then(result => console.log(result));
 };
 
 export const savePickUpRequest = (req, res, next) => {
@@ -24,7 +20,7 @@ export const savePickUpRequest = (req, res, next) => {
         date: req.body.date,
         shift: req.body.shift
     });
-    
+
     pickupRequest.save((err) => {
         if (err) {
             return next(err);

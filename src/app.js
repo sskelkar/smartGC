@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import PropertiesReader from 'properties-reader';
+import moment from 'moment';
 import {getPickUpRequests, savePickUpRequest} from './pickup/request/pickuprequest.controller';
 import {getShifts} from "./pickup/schedule/shift.controller";
 
@@ -14,10 +15,10 @@ const properties = PropertiesReader('properties.ini');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-app.get(garbagePickupUrl + "/today", getPickUpRequests);
+// app.get(garbagePickupUrl + "/today", getPickUpRequests);
 app.post(garbagePickupUrl, savePickUpRequest);
 app.get(shiftsUrl, getShifts);
-
+getPickUpRequests(moment('2018-01-02').startOf('day').format('YYYY-MM-DD'), 'MORNING', ['Kharadi']);
 app.listen(port, () => {
     console.log('Server running on port number ' + port);
 });
