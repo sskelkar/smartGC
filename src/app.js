@@ -5,6 +5,7 @@ import PropertiesReader from 'properties-reader';
 import moment from 'moment';
 import {getPickUpRequests, savePickUpRequest} from './pickup/request/pickuprequest.controller';
 import {getShifts} from "./pickup/schedule/shift.controller";
+import {createUser, addKarmaPoints} from "./pickup/user/user.controller";
 
 const app = express();
 const port = 4000;
@@ -18,7 +19,9 @@ app.use(bodyParser.urlencoded({extended: false}));
 // app.get(garbagePickupUrl + "/today", getPickUpRequests);
 app.post(garbagePickupUrl, savePickUpRequest);
 app.get(shiftsUrl, getShifts);
-getPickUpRequests(moment('2018-01-02').startOf('day').format('YYYY-MM-DD'), 'MORNING', ['Kharadi']);
+app.post('/users', createUser);
+app.put('/users/:id', addKarmaPoints);
+// getPickUpRequests(moment('2018-01-02').startOf('day').format('YYYY-MM-DD'), 'MORNING', ['Kharadi']);
 app.listen(port, () => {
     console.log('Server running on port number ' + port);
 });
