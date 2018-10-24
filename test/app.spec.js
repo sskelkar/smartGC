@@ -1,9 +1,9 @@
-import { expect } from 'chai';
+import expect from 'chai';
 import request from 'supertest';
+import {app} from '../src/app';
 
 xit('Main page', (done) => {
-    request('/', (error, res, body) => {
-        expect(body).to.equal("Hello");
-        done();
-    });
+    request(app)
+        .get('/hello')
+        .expect(200, 'Hello world', done)
 });

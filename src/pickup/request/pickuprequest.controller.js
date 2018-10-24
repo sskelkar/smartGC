@@ -1,11 +1,11 @@
 import PickupRequest from './pickuprequest.model';
 
-export const getPickUpRequests = (date, shift, locations) => {
-    PickupRequest.aggregate([
+export const getPickUpRequests = (date, shift, localities) => {
+     return PickupRequest.aggregate([
         {
             $match: {
                 shift,
-                locality: {$in: locations},
+                locality: {$in: localities},
                 date: new Date(date)
             }
         }
