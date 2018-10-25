@@ -9,7 +9,7 @@ export const getPickUpRequests = (date, shift, localities) => {
                 date: new Date(date)
             }
         }
-    ]).then(result => console.log(result));
+    ]);
 };
 
 export const savePickUpRequest = (req, res, next) => {
@@ -18,7 +18,8 @@ export const savePickUpRequest = (req, res, next) => {
         longitude: req.body.longitude,
         locality: req.body.locality,
         date: req.body.date,
-        shift: req.body.shift
+        shift: req.body.shift,
+        residentId: req.body.residentId
     });
 
     pickupRequest.save((err) => {
