@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import request from 'supertest';
 import {app} from '../../../src/app';
-import User from '../../../src/pickup/user/user.model';
+import User from '../../../src/user/user.model';
 
 describe('User tests', () => {
     const user = {

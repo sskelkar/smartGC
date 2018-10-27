@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-let PickupRequestSchema = mongoose.Schema({
+export let PickupRequestSchema = mongoose.Schema({
     latitude: {type: Number, required: true},
     longitude: {type: Number, required: true},
     locality: {type: String, required: true},

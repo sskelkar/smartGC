@@ -4,7 +4,8 @@ import bodyParser from 'body-parser';
 import PropertiesReader from 'properties-reader';
 import {getPickUpRequests, savePickUpRequest} from './pickup/request/pickuprequest.controller';
 import {getShifts} from "./pickup/schedule/shift.controller";
-import {addKarmaPoints, createUser} from "./pickup/user/user.controller";
+import {addKarmaPoints, createUser} from "./user/user.controller";
+import {getTripForCollector} from "./pickup/trip/trip.controller";
 
 export const app = express();
 const port = 4000;
@@ -15,6 +16,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.post('/pickup/requests', savePickUpRequest);
 app.get('/pickup/shifts', getShifts);
+app.get('/pickup/trips/:collectorId', getTripForCollector);
 app.post('/users', createUser);
 app.put('/users/:id', addKarmaPoints);
 // getPickUpRequests('2018-01-02', 'MORNING', ['Kharadi', 'Wagholi']);
