@@ -9,6 +9,9 @@ describe('User tests', () => {
         "role": "COLLECTOR",
         "phone": "9087"
     };
+    beforeEach(async () => {
+        await User.deleteMany({});
+    });
     it('should create user', () => {
         request(app)
             .post('/users')
@@ -23,9 +26,9 @@ describe('User tests', () => {
             })
     });
 
-    it('should add karma points to a user', async () => {
+    it('should add karma points to a resident', async () => {
         //given
-        const createdUser = await User.create({...user, karmaPoints: 100});
+        const createdUser = await User.create({...user, karmaPoints: 100, role: 'RESIDENT'});
 
         //when
         await request(app)
@@ -37,5 +40,17 @@ describe('User tests', () => {
         //then
         const updatedUser = await User.findById(createdUser._id);
         expect(updatedUser.karmaPoints).to.equal(400);
+    });
+
+    it('should throw 400 if user is not a resident', async () => {
+        //given
+        const createdUser = await User.create({...user, karmaPoints: 100});
+
+        //when
+        await request(app)
+            .put(`/users/${createdUser._id}`)
+            .send({karma: 300})
+            .set('Accept', 'application/json')
+            .expect(400, {message: 'Resident not found'});
     });
 });

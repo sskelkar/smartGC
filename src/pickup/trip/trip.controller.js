@@ -29,7 +29,13 @@ export const getActiveTripForResident = (req, res) => {
 };
 
 export const createTrip = async (req, res) => {
-    let pickups = await getPickUpRequests(req.body.date, req.body.shift, req.body.localities);
+    let pickups = [];
+    try {
+        pickups = await getPickUpRequests(req.body.date, req.body.shift, req.body.localities);
+    } catch (e) {
+        return res.status(400).send(e);
+    }
+
     let trip = new Trip({
         collectorId: req.body.collectorId,
         pickups,

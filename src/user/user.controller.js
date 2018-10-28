@@ -19,9 +19,9 @@ export const addKarmaPoints = (req, res) => {
     const id = req.params.id;
     const karma = req.body.karma;
 
-    User.findById(id, (err, user) => {
-        if (err) {
-            return res.status(400).send('User not found with id ', id);
+    User.findOne({_id: id, role: 'RESIDENT'}, (err, user) => {
+        if (err || user == null) {
+            return res.status(400).send({message: 'Resident not found'});
         }
 
         user.set({ karmaPoints: user.karmaPoints + karma });
