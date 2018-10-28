@@ -61,11 +61,21 @@ describe('Trip tests', () => {
             .expect(404, {message: 'No active trip found'});
     });
 
-    it('should return active trip for a resident if pick up is not yet done for that resident', async () => {
+    it('should return active trip for a resident with pickup points only till requested resident', async () => {
         //given
         await Trip.create({collectorId, status: 'ACTIVE', pickups: [{...pickupRequest, residentId: "99"}]});
         await Trip.create({collectorId, status: 'COMPLETED', pickups: [pickupRequest]});
-        let expectedTrip = await Trip.create({collectorId, status: 'ACTIVE', pickups: [pickupRequest]});
+        let tripWithRequestedResident = await Trip.create({
+            collectorId,
+            status: 'ACTIVE',
+            pickups: [
+                {...pickupRequest, residentId: "98"},
+                {...pickupRequest, residentId: "99"},
+                {...pickupRequest, residentId: "100"},
+                {...pickupRequest, residentId: "101"},
+                {...pickupRequest, residentId: "102"}
+            ]
+        });
 
         //when
         let trip = await request(app)
@@ -74,6 +84,14 @@ describe('Trip tests', () => {
             .expect(200);
 
         //then
+        const expectedTrip = {
+            ...tripWithRequestedResident._doc,
+            pickups: [
+                {...pickupRequest, residentId: "98"},
+                {...pickupRequest, residentId: "99"},
+                {...pickupRequest, residentId: "100"}
+            ]
+        };
         verifyTrip(expectedTrip, trip.body);
     });
 
@@ -89,7 +107,7 @@ describe('Trip tests', () => {
             .expect(404, {message: 'No active trip found'});
     });
 
-    it('should return 404 if active trip found for a given resident, but pick up is already done for him/her', async () => {
+    it('should return 404 if active trip found for a given resident, but pickup is already done for him/her', async () => {
         //given
         await Trip.create({collectorId, status: 'ACTIVE', pickups: [{...pickupRequest, residentId: "99"}]});
         await Trip.create({collectorId, status: 'ACTIVE', pickups: [{...pickupRequest, status: "PICKUP_DONE"}]});
@@ -165,7 +183,11 @@ describe('Trip tests', () => {
         expect(actual.id).to.exist;
         expect(actual.collectorId).to.equal(expected.collectorId);
         expect(actual.status).to.equal(expected.status);
-        expected.pickups.forEach((pickup, index) => verifyPickup(pickup, actual.pickups[index]))
+        expect(actual.pickups.length).to.equal(expected.pickups.length);
+
+        for(let i=0; i<expected.pickups.length; i++) {
+            verifyPickup(expected.pickups[i], actual.pickups[i])
+        }
     }
 
     function verifyPickup(expected, actual) {
