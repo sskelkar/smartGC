@@ -4,7 +4,7 @@ import {app} from '../../../src/app'
 import Trip from "../../../src/pickup/trip/trip.model";
 import PickupRequest from "../../../src/pickup/request/pickuprequest.model";
 
-describe('Pickup trip tests', () => {
+describe('Trip tests', () => {
     const collectorId = "50";
     const residentId = "100";
     let pickupRequest = {
@@ -128,6 +128,37 @@ describe('Pickup trip tests', () => {
         let savedTrips = await Trip.find();
         let expectedTrip = {collectorId, status: 'ACTIVE', pickups: [pickup1, pickup2, pickup3]};
         verifyTrip(expectedTrip, savedTrips[0]);
+    });
+
+    it('should update a trip with collector location or pickup request order', async () => {
+        //given
+        let trip = await Trip.create({collectorId, status: 'ACTIVE', pickups: [pickupRequest]});
+        await Trip.create({collectorId, status: 'COMPLETED', pickups: [pickupRequest]});
+        await Trip.create({collectorId: "2", status: 'ACTIVE', pickups: [pickupRequest]});
+
+        //when
+        let updatedTripRequest = {...trip._doc, collectorLocation: {latitude: 10, longitude: 10}};
+        await request(app)
+            .put(`/trips/${trip._id}`)
+            .send(updatedTripRequest)
+            .set('Accept', 'application/json')
+            .expect(200);
+
+        //then
+        verifyTrip(updatedTripRequest, await Trip.findById(trip._id));
+    });
+
+    it('should throw 404 if no active trip found to update', async () => {
+        //given
+        let trip = await Trip.create({collectorId, status: 'COMPLETED', pickups: [pickupRequest]});
+
+        //when
+        let updatedTripRequest = {...trip._doc, collectorLocation: {latitude: 10, longitude: 10}};
+        await request(app)
+            .put(`/trips/${trip._id}`)
+            .send(updatedTripRequest)
+            .set('Accept', 'application/json')
+            .expect(404, {message: 'Could not process request'});
     });
 
     function verifyTrip(expected, actual) {

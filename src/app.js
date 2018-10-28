@@ -5,7 +5,12 @@ import PropertiesReader from 'properties-reader';
 import {savePickUpRequest} from './pickup/request/pickuprequest.controller';
 import {getShifts} from "./pickup/schedule/shift.controller";
 import {addKarmaPoints, createUser} from "./user/user.controller";
-import {createTrip, getActiveTripForCollector, getActiveTripForResident} from "./pickup/trip/trip.controller";
+import {
+    createTrip,
+    getActiveTripForCollector,
+    getActiveTripForResident,
+    updateTrip
+} from "./pickup/trip/trip.controller";
 
 export const app = express();
 const port = 4000;
@@ -17,6 +22,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.post('/pickup/requests', savePickUpRequest);
 app.get('/pickup/shifts', getShifts);
 app.post('/trips', createTrip);
+app.put('/trips/:id', updateTrip);
 app.get('/trips/collector/:collectorId', getActiveTripForCollector);
 app.get('/trips/resident/:residentId', getActiveTripForResident);
 app.post('/users', createUser);

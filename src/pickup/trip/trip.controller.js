@@ -49,3 +49,17 @@ export const createTrip = async (req, res) => {
         res.status(200).send();
     })
 };
+
+export const updateTrip = (req, res) => {
+    let idToUpdate = req.params.id;
+    return Trip.updateOne(
+        {_id: idToUpdate, status: 'ACTIVE'},
+        req.body,
+        async (err, updateResult) => {
+            if (err || updateResult.n === 0) {
+                return res.status(404).send({message: 'Could not process request'});
+            }
+            return res.send(await Trip.findById(idToUpdate));
+        }
+    );
+};
