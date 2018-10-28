@@ -6,7 +6,8 @@ export let PickupRequestSchema = mongoose.Schema({
     locality: {type: String, required: true},
     date: {type: Date, required: true},
     shift: {type: String, required: true},
-    residentId: {type: String, required: true}
+    residentId: {type: String, required: true},
+    status: {type: String, enum: ['PICKUP_PLANNED', 'PICKUP_DONE'], default: 'PICKUP_PLANNED'}
 });
 
 const PickupRequest = mongoose.model('PickupRequest', PickupRequestSchema);

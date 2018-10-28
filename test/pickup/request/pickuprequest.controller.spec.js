@@ -14,7 +14,7 @@ describe('Pickup request tests', () => {
         "shift": "MORNING"
     };
     beforeEach(async () => {
-       await PickupRequest.deleteMany({});
+        await PickupRequest.deleteMany({});
     });
     it('should add a pick up request', async () => {
         //when
@@ -25,8 +25,11 @@ describe('Pickup request tests', () => {
             .expect(200);
 
         //then
-        expect(resp.text).to.equal('Garbage pickup request is successful')
-        expect(await PickupRequest.estimatedDocumentCount()).to.equal(1);
+        expect(resp.body).to.eql({message: 'Your pickup request was successful'})
+        let savedRequests = await PickupRequest.find();
+        expect(savedRequests.length).to.equal(1);
+        expect(savedRequests[0]._id).to.exist;
+        expect(savedRequests[0].status).to.equal('PICKUP_PLANNED');
     });
 
     it('should return pickup requests for given input', async () => {

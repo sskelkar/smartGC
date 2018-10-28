@@ -26,6 +26,6 @@ export const savePickUpRequest = (req, res, next) => {
         if (err) {
             return next(err);
         }
-        res.send('Garbage pickup request is successful');
+        res.send({message: 'Your pickup request was successful'});
     });
 };

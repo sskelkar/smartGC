@@ -12,7 +12,8 @@ describe('Pickup trip tests', () => {
         "longitude": 10,
         "locality": "Wagholi",
         "date": "2018-01-02",
-        "shift": "MORNING"
+        "shift": "MORNING",
+        "status": "PICKUP_PLANNED"
     };
     beforeEach(async () => {
         await Trip.deleteMany({});
@@ -43,7 +44,7 @@ describe('Pickup trip tests', () => {
         await request(app)
             .get(`/collector/${collectorId}/trip`)
             .set('Accept', 'application/json')
-            .expect(404, `No active found for collector: ${collectorId}`);
+            .expect(404, {message: 'No active trip found'});
     });
 
     it('should return 404 if no trip with at least one pickup point is found for a collector', async () => {
@@ -55,10 +56,10 @@ describe('Pickup trip tests', () => {
         await request(app)
             .get(`/collector/${collectorId}/trip`)
             .set('Accept', 'application/json')
-            .expect(404, `No active found for collector: ${collectorId}`);
+            .expect(404, {message: 'No active trip found'});
     });
 
-    it('should return active trip for a resident', async () => {
+    it('should return active trip for a resident if pick up is not yet done for that resident', async () => {
         //given
         await Trip.create({collectorId, status: 'ACTIVE', pickups: [{...pickupRequest, residentId: "99"}]});
         await Trip.create({collectorId, status: 'COMPLETED', pickups: [pickupRequest]});
@@ -83,7 +84,19 @@ describe('Pickup trip tests', () => {
         await request(app)
             .get(`/resident/${residentId}/trip`)
             .set('Accept', 'application/json')
-            .expect(404, `No active found for resident: ${residentId}`);
+            .expect(404, {message: 'No active trip found'});
+    });
+
+    it('should return 404 if active trip found for a given resident, but pick up is already done for him/her', async () => {
+        //given
+        await Trip.create({collectorId, status: 'ACTIVE', pickups: [{...pickupRequest, residentId: "99"}]});
+        await Trip.create({collectorId, status: 'ACTIVE', pickups: [{...pickupRequest, status: "PICKUP_DONE"}]});
+
+        //when
+        await request(app)
+            .get(`/resident/${residentId}/trip`)
+            .set('Accept', 'application/json')
+            .expect(404, {message: 'No active trip found'});
     });
 
     function verify(expected, actual) {
