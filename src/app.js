@@ -2,10 +2,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import PropertiesReader from 'properties-reader';
-import {getPickUpRequests, savePickUpRequest} from './pickup/request/pickuprequest.controller';
+import {savePickUpRequest} from './pickup/request/pickuprequest.controller';
 import {getShifts} from "./pickup/schedule/shift.controller";
 import {addKarmaPoints, createUser} from "./user/user.controller";
-import {getActiveTripForCollector, getActiveTripForResident} from "./pickup/trip/trip.controller";
+import {createTrip, getActiveTripForCollector, getActiveTripForResident} from "./pickup/trip/trip.controller";
 
 export const app = express();
 const port = 4000;
@@ -16,11 +16,12 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.post('/pickup/requests', savePickUpRequest);
 app.get('/pickup/shifts', getShifts);
-app.get('/collector/:collectorId/trip', getActiveTripForCollector);
-app.get('/resident/:residentId/trip', getActiveTripForResident);
+app.post('/trips', createTrip);
+app.get('/trips/collector/:collectorId', getActiveTripForCollector);
+app.get('/trips/resident/:residentId', getActiveTripForResident);
 app.post('/users', createUser);
 app.put('/users/:id', addKarmaPoints);
-// getPickUpRequests('2018-01-02', 'MORNING', ['Kharadi', 'Wagholi']);
+
 app.listen(port, () => {
     console.log('Server running on port number ' + port);
 });
