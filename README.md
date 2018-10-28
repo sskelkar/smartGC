@@ -1,7 +1,5 @@
-#smartGC
+# SmartGC
 
-npm install
+##### Prerequisites: MongoDB, Node, npm
 
-npm start
-
-npm test
+##### Commands: `npm install`, `npm start`, `npm test`
