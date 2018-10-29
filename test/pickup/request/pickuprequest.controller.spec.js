@@ -29,7 +29,7 @@ describe('Pickup request tests', () => {
         let savedRequests = await PickupRequest.find();
         expect(savedRequests.length).to.equal(1);
         expect(savedRequests[0]._id).to.exist;
-        expect(savedRequests[0].status).to.equal('PICKUP_PLANNED');
+        expect(savedRequests[0].status).to.equal('PLANNED');
     });
 
     it('should return pickup requests for given input', async () => {

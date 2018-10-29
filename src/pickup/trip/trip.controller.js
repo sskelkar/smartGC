@@ -19,7 +19,7 @@ export const getActiveTripForResident = (req, res) => {
     return Trip.findOne({
         status: 'ACTIVE',
         'pickups.residentId': residentId,
-        'pickups.status': 'PICKUP_PLANNED'
+        'pickups.status': 'STARTED'
     }, (err, trip) => {
         if (err || trip == null || trip.pickups.length === 0) {
             return res.status(404).send({message: 'No active trip found'});

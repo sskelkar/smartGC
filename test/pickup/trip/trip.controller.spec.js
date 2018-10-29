@@ -14,7 +14,7 @@ describe('Trip tests', () => {
         "locality": "Wagholi",
         "date": "2018-01-02",
         "shift": "MORNING",
-        "status": "PICKUP_PLANNED"
+        "status": "STARTED"
     };
     beforeEach(async () => {
         await Trip.deleteMany({});
@@ -110,7 +110,7 @@ describe('Trip tests', () => {
     it('should return 404 if active trip found for a given resident, but pickup is already done for him/her', async () => {
         //given
         await Trip.create({collectorId, status: 'ACTIVE', pickups: [{...pickupRequest, residentId: "99"}]});
-        await Trip.create({collectorId, status: 'ACTIVE', pickups: [{...pickupRequest, status: "PICKUP_DONE"}]});
+        await Trip.create({collectorId, status: 'ACTIVE', pickups: [{...pickupRequest, status: "DONE"}]});
 
         //when
         await request(app)
