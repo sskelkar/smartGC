@@ -192,8 +192,22 @@ describe('Trip tests', () => {
             .expect(404, {message: 'Could not process request'});
     });
 
+    it('should set the trip status to completed', async () => {
+        //given
+        let trip = await Trip.create({collectorId, status: 'ACTIVE', pickups: [pickupRequest]});
+
+        //when
+        await request(app)
+            .delete(`/trips/${trip._id}`)
+            .set('Accept', 'application/json')
+            .expect(200, {message: 'Trip over'});
+
+        let completed = await Trip.findById(trip._id);
+        verifyTrip({...trip._doc, status:'COMPLETED'}, completed._doc)
+    });
+
     function verifyTrip(expected, actual) {
-        expect(actual.id).to.exist;
+        expect(actual._id).to.exist;
         expect(actual.collectorId).to.equal(expected.collectorId);
         expect(actual.status).to.equal(expected.status);
         expect(actual.pickups.length).to.equal(expected.pickups.length);

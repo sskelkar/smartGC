@@ -7,6 +7,7 @@ import {getShifts} from "./pickup/schedule/shift.controller";
 import {addKarmaPoints, createUser} from "./user/user.controller";
 import {
     createTrip,
+    deleteTrip,
     getActiveTripForCollector,
     getActiveTripForResident,
     updateTrip
@@ -23,6 +24,7 @@ app.post('/pickup/requests', savePickUpRequest);
 app.get('/pickup/shifts', getShifts);
 app.post('/trips', createTrip);
 app.put('/trips/:id', updateTrip);
+app.delete('/trips/:id', deleteTrip);
 app.get('/trips/collector/:collectorId', getActiveTripForCollector);
 app.get('/trips/resident/:residentId', getActiveTripForResident);
 app.post('/users', createUser);

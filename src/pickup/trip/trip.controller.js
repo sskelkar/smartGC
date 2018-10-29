@@ -70,3 +70,17 @@ export const updateTrip = (req, res) => {
         }
     );
 };
+
+export const deleteTrip = (req, res) => {
+    let idToDelete = req.params.id;
+    return Trip.updateOne(
+        {_id: idToDelete, status: 'ACTIVE'},
+        {status: 'COMPLETED'},
+        async (err, updateResult) => {
+            if (err || updateResult.n === 0) {
+                return res.status(404).send({message: 'Could not process request'});
+            }
+            return res.send({message: 'Trip over'});
+        }
+    );
+};
