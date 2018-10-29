@@ -119,6 +119,18 @@ describe('Trip tests', () => {
             .expect(404, {message: 'No active trip found'});
     });
 
+    it(`should return collector's coordinates in an active trip for a resident`, async () => {
+        //given
+        const collectorLocation = {latitude: 10, longitude: 20};
+        let trip = await Trip.create({collectorId, status: 'ACTIVE', pickups: [pickupRequest], collectorLocation});
+
+        //when
+        await request(app)
+            .get(`/trips/${trip._id}/collector/location`)
+            .set('Accept', 'application/json')
+            .expect(200, collectorLocation);
+    });
+
     it('should create a trip for a given collector and requests found for a schedule', async () => {
         //given
         const collectorId = "1";
@@ -126,7 +138,12 @@ describe('Trip tests', () => {
         let pickup2 = {...pickupRequest, residentId: "20", status: "PLANNED"};
         let savedPickup1 = await PickupRequest.create(pickup1);
         let savedPickup2 = await PickupRequest.create(pickup2);
-        let savedPickup3 = await PickupRequest.create({...pickupRequest, residentId: "30", status: 'PLANNED', shift: 'EVENING'});
+        let savedPickup3 = await PickupRequest.create({
+            ...pickupRequest,
+            residentId: "30",
+            status: 'PLANNED',
+            shift: 'EVENING'
+        });
 
         //when
         await request(app)
@@ -203,7 +220,7 @@ describe('Trip tests', () => {
             .expect(200, {message: 'Trip over'});
 
         let completed = await Trip.findById(trip._id);
-        verifyTrip({...trip._doc, status:'COMPLETED'}, completed._doc)
+        verifyTrip({...trip._doc, status: 'COMPLETED'}, completed._doc)
     });
 
     function verifyTrip(expected, actual) {

@@ -9,7 +9,7 @@ import {
     createTrip,
     deleteTrip,
     getActiveTripForCollector,
-    getActiveTripForResident,
+    getActiveTripForResident, getCollectorLocationFromTrip,
     updateTrip
 } from "./pickup/trip/trip.controller";
 
@@ -25,6 +25,7 @@ app.get('/pickup/shifts', getShifts);
 app.post('/trips', createTrip);
 app.put('/trips/:id', updateTrip);
 app.delete('/trips/:id', deleteTrip);
+app.get('/trips/:id/collector/location', getCollectorLocationFromTrip);
 app.get('/trips/collector/:collectorId', getActiveTripForCollector);
 app.get('/trips/resident/:residentId', getActiveTripForResident);
 app.post('/users', createUser);
