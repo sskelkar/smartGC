@@ -122,13 +122,11 @@ describe('Trip tests', () => {
     it('should create a trip for a given collector and requests found for a schedule', async () => {
         //given
         const collectorId = "1";
-        let pickup1 = {...pickupRequest, residentId: "10"};
-        let pickup2 = {...pickupRequest, residentId: "20"};
-        let pickup3 = {...pickupRequest, residentId: "30"};
-        await PickupRequest.create(pickup1);
-        await PickupRequest.create(pickup2);
-        await PickupRequest.create(pickup3);
-        await PickupRequest.create({...pickupRequest, residentId: "40", shift: 'EVENING'});
+        let pickup1 = {...pickupRequest, residentId: "10", status: "PLANNED"};
+        let pickup2 = {...pickupRequest, residentId: "20", status: "PLANNED"};
+        let savedPickup1 = await PickupRequest.create(pickup1);
+        let savedPickup2 = await PickupRequest.create(pickup2);
+        let savedPickup3 = await PickupRequest.create({...pickupRequest, residentId: "30", status: 'PLANNED', shift: 'EVENING'});
 
         //when
         await request(app)
@@ -144,8 +142,23 @@ describe('Trip tests', () => {
 
         //then
         let savedTrips = await Trip.find();
-        let expectedTrip = {collectorId, status: 'ACTIVE', pickups: [pickup1, pickup2, pickup3]};
+        let expectedTrip = {
+            collectorId,
+            status: 'ACTIVE',
+            pickups: [
+                {...pickup1, status: 'STARTED'},
+                {...pickup2, status: 'STARTED'},
+            ]
+        };
         verifyTrip(expectedTrip, savedTrips[0]);
+
+        let updated1 = await PickupRequest.findById(savedPickup1._id);
+        let updated2 = await PickupRequest.findById(savedPickup2._id);
+        expect(updated1.status).to.equal('STARTED');
+        expect(updated2.status).to.equal('STARTED');
+
+        let notUpdated = await PickupRequest.findById(savedPickup3._id);
+        expect(notUpdated.status).to.equal('PLANNED');
     });
 
     it('should update a trip with collector location or pickup request order', async () => {
@@ -185,7 +198,7 @@ describe('Trip tests', () => {
         expect(actual.status).to.equal(expected.status);
         expect(actual.pickups.length).to.equal(expected.pickups.length);
 
-        for(let i=0; i<expected.pickups.length; i++) {
+        for (let i = 0; i < expected.pickups.length; i++) {
             verifyPickup(expected.pickups[i], actual.pickups[i])
         }
     }
@@ -197,5 +210,6 @@ describe('Trip tests', () => {
         expect(actual.shift).to.equal(expected.shift);
         expect(new Date(actual.date)).to.eql(new Date(expected.date));
         expect(actual.residentId).to.equal(expected.residentId);
+        expect(actual.status).to.equal(expected.status);
     }
 });

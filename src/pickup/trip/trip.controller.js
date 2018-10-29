@@ -1,5 +1,6 @@
 import Trip from './trip.model';
 import {getPickUpRequests} from "../request/pickuprequest.controller";
+import PickupRequest from "../request/pickuprequest.model";
 
 export const getActiveTripForCollector = (req, res) => {
     let collectorId = req.params.collectorId;
@@ -33,10 +34,15 @@ export const createTrip = async (req, res) => {
     let pickups = [];
     try {
         pickups = await getPickUpRequests(req.body.date, req.body.shift, req.body.localities);
+        pickups.forEach(async pickup => {
+            await PickupRequest.updateOne({_id: pickup._id}, {status: 'STARTED'});
+        });
     } catch (e) {
         return res.status(400).send(e);
     }
-
+    pickups.forEach(pickup => {
+        pickup.status = 'STARTED';
+    });
     let trip = new Trip({
         collectorId: req.body.collectorId,
         pickups,

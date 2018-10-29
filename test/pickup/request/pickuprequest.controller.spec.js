@@ -11,7 +11,8 @@ describe('Pickup request tests', () => {
         "longitude": 10,
         "locality": "Wagholi",
         "date": "2018-01-02",
-        "shift": "MORNING"
+        "shift": "MORNING",
+        "status": "PLANNED"
     };
     beforeEach(async () => {
         await PickupRequest.deleteMany({});
@@ -34,8 +35,9 @@ describe('Pickup request tests', () => {
 
     it('should return pickup requests for given input', async () => {
         //given
-        await PickupRequest.create({...pickupRequest});
-        await PickupRequest.create({...pickupRequest, locality: 'Kharadi'});
+        let expected1 = await PickupRequest.create({...pickupRequest});
+        let expected2 = await PickupRequest.create({...pickupRequest, locality: 'Kharadi'});
+        await PickupRequest.create({...pickupRequest, locality: 'Kharadi', status: "STARTED"});
         await PickupRequest.create({...pickupRequest, date: '2018-01-30'});
         await PickupRequest.create({...pickupRequest, shift: 'EVENING'});
         await PickupRequest.create({...pickupRequest, locality: 'Baner'});
@@ -44,8 +46,9 @@ describe('Pickup request tests', () => {
         let pickUpRequests = await getPickUpRequests(pickupRequest.date, pickupRequest.shift, ['Kharadi', 'Wagholi']);
 
         //then
-        verify(pickupRequest, pickUpRequests[0]);
-        verify({...pickupRequest, locality: 'Kharadi'}, pickUpRequests[1]);
+        expect(pickUpRequests.length).to.equal(2);
+        verify(expected1, pickUpRequests[0]);
+        verify(expected2, pickUpRequests[1]);
     });
 
     function verify(expected, actual) {
@@ -55,5 +58,6 @@ describe('Pickup request tests', () => {
         expect(actual.shift).to.equal(expected.shift);
         expect(actual.date).to.eql(new Date(expected.date));
         expect(actual.residentId).to.equal(expected.residentId);
+        expect(actual.status).to.equal(expected.status);
     }
 });

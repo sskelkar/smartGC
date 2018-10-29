@@ -6,7 +6,8 @@ export const getPickUpRequests = (date, shift, localities) => {
             $match: {
                 shift,
                 locality: {$in: localities},
-                date: new Date(date)
+                date: new Date(date),
+                status: 'PLANNED'
             }
         }
     ]);
