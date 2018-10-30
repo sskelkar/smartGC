@@ -122,13 +122,25 @@ describe('Trip tests', () => {
     it(`should return collector's coordinates in an active trip for a resident`, async () => {
         //given
         const collectorLocation = {latitude: 10, longitude: 20};
-        let trip = await Trip.create({collectorId, status: 'ACTIVE', pickups: [pickupRequest], collectorLocation});
+        await Trip.create({collectorId, status: 'ACTIVE', pickups: [pickupRequest], collectorLocation});
 
         //when
         await request(app)
-            .get(`/trips/${trip._id}/collector/location`)
+            .get(`/trips/resident/${pickupRequest.residentId}/collector/location`)
             .set('Accept', 'application/json')
             .expect(200, collectorLocation);
+    });
+
+    it(`should return 404 in get collector location call, if the trip is over for a resident`, async () => {
+        //given
+        const collectorLocation = {latitude: 10, longitude: 20};
+        await Trip.create({collectorId, status: 'ACTIVE', pickups: [{...pickupRequest, status: 'DONE'}], collectorLocation});
+
+        //when
+        await request(app)
+            .get(`/trips/resident/${pickupRequest.residentId}/collector/location`)
+            .set('Accept', 'application/json')
+            .expect(404, {message: 'No active trip found'});
     });
 
     it('should create a trip for a given collector and requests found for a schedule', async () => {

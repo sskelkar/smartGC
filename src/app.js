@@ -25,9 +25,9 @@ app.get('/pickup/shifts', getShifts);
 app.post('/trips', createTrip);
 app.put('/trips/:id', updateTrip);
 app.delete('/trips/:id', deleteTrip);
-app.get('/trips/:id/collector/location', getCollectorLocationFromTrip);
 app.get('/trips/collector/:collectorId', getActiveTripForCollector);
 app.get('/trips/resident/:residentId', getActiveTripForResident);
+app.get('/trips/resident/:residentId/collector/location', getCollectorLocationFromTrip);
 app.post('/users', createUser);
 app.put('/users/:id', addKarmaPoints);
 
