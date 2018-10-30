@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import PropertiesReader from 'properties-reader';
 import {savePickUpRequest} from './pickup/request/pickuprequest.controller';
 import {getShifts} from "./pickup/schedule/shift.controller";
-import {addKarmaPoints, createUser} from "./user/user.controller";
+import {addKarmaPoints, createUser, getUser} from "./user/user.controller";
 import {
     createTrip,
     deleteTrip,
@@ -29,6 +29,7 @@ app.get('/trips/collector/:collectorId', getActiveTripForCollector);
 app.get('/trips/resident/:residentId', getActiveTripForResident);
 app.get('/trips/resident/:residentId/collector/location', getCollectorLocationFromTrip);
 app.post('/users', createUser);
+app.get('/users/:id', getUser);
 app.put('/users/:id', addKarmaPoints);
 
 app.listen(port, () => {

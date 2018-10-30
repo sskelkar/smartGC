@@ -24,7 +24,7 @@ async function updatePickupRequestsFor(residentId) {
     );
 }
 
-async function updateTripsWithResident(residentId) {
+async function updateTripsThatHaveThisResident(residentId) {
     let trip = await Trip.findOne({
         status: 'ACTIVE',
         'pickups.residentId': residentId,
@@ -46,7 +46,7 @@ export const addKarmaPoints = (req, res) => {
         }
 
         await updatePickupRequestsFor(id);
-        await updateTripsWithResident(id);
+        await updateTripsThatHaveThisResident(id);
 
         user.set({karmaPoints: user.karmaPoints + karma});
         user.save((err, updatedUser) => {
@@ -55,5 +55,16 @@ export const addKarmaPoints = (req, res) => {
             }
             res.send(updatedUser);
         });
+    });
+};
+
+export const getUser = (req, res) => {
+    const id = req.params.id;
+
+    User.findOne({_id: id}, (err, user) => {
+        if (err || user == null) {
+            return res.status(404).send({message: 'User not found'});
+        }
+        res.send(user);
     });
 };

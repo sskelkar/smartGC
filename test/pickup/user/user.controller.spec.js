@@ -81,4 +81,34 @@ describe('User tests', () => {
             .set('Accept', 'application/json')
             .expect(400, {message: 'Resident not found'});
     });
+
+    it('should return user', async () => {
+        //given
+        const createdUser = await User.create({...user, karmaPoints: 100, role: 'RESIDENT'});
+
+        //when
+        let response = await request(app)
+            .get(`/users/${createdUser._id}`)
+            .set('Accept', 'application/json')
+            .expect(200);
+
+        //then
+        verify(createdUser, response.body);
+    });
+
+    it('should return 404 if user not found', async () => {
+        //when
+        await request(app)
+            .get(`/users/1`)
+            .set('Accept', 'application/json')
+            .expect(404, {message: 'User not found'});
+    });
+
+    function verify(expected, actual) {
+        expect(actual.name).to.equal(expected.name);
+        expect(actual.phone).to.equal(expected.phone);
+        expect(actual.role).to.equal(expected.role);
+        expect(actual.karmaPoints).to.equal(expected.karmaPoints);
+        expect(actual.id).to.equal(expected.id);
+    }
 });
