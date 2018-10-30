@@ -5,8 +5,8 @@ let tripSchema = mongoose.Schema({
     collectorId: {type: String, required: true},
     status: {type: String, enum: ['ACTIVE', 'COMPLETED'], required: true},
     pickups: {type: [PickupRequestSchema], default: [], required: true},
-    depotLocation: {type: {latitude: Number, longitude: Number}, default: {latitude: 18.524660, longitude: 73.853229}},
-    collectorLocation: {type: {latitude: Number, longitude: Number}, default: {latitude: 18.524660, longitude: 73.853229}},
+    depotLocation: {type: {latitude: Number, longitude: Number}, default: {latitude: 18.568875, longitude: 73.9109393}},
+    collectorLocation: {type: {latitude: Number, longitude: Number}, default: {latitude: 18.568875, longitude: 73.9109393}},
 });
 
 tripSchema.virtual('id', () => this._id.toHexString());
