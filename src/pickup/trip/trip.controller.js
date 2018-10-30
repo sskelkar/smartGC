@@ -22,6 +22,7 @@ export const getActiveTripForResident = (req, res) => {
             return res.status(404).send({message: 'No active trip found'});
         }
         let pickupsTillThisResident = trip.pickups.slice(0, 1 + trip.pickups.findIndex(pickup => pickup.residentId === residentId));
+        pickupsTillThisResident = pickupsTillThisResident.filter(pickup => pickup.status !== 'DONE');
         res.send({...trip._doc, id: trip._id, pickups: pickupsTillThisResident});
     };
     return getActiveTripQueryForResident(residentId, callback);

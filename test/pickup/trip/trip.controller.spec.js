@@ -61,7 +61,7 @@ describe('Trip tests', () => {
             .expect(404, {message: 'No active trip found'});
     });
 
-    it('should return active trip for a resident with pickup points only till requested resident', async () => {
+    it('should return active trip for a resident with active pickup points only till requested resident', async () => {
         //given
         await Trip.create({collectorId, status: 'ACTIVE', pickups: [{...pickupRequest, residentId: "99"}]});
         await Trip.create({collectorId, status: 'COMPLETED', pickups: [pickupRequest]});
@@ -69,7 +69,7 @@ describe('Trip tests', () => {
             collectorId,
             status: 'ACTIVE',
             pickups: [
-                {...pickupRequest, residentId: "98"},
+                {...pickupRequest, residentId: "98", status: 'DONE'},
                 {...pickupRequest, residentId: "99"},
                 {...pickupRequest, residentId: "100"},
                 {...pickupRequest, residentId: "101"},
@@ -87,7 +87,6 @@ describe('Trip tests', () => {
         const expectedTrip = {
             ...tripWithRequestedResident._doc,
             pickups: [
-                {...pickupRequest, residentId: "98"},
                 {...pickupRequest, residentId: "99"},
                 {...pickupRequest, residentId: "100"}
             ]
