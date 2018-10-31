@@ -97,6 +97,11 @@ export const deleteTrip = (req, res) => {
             if (err || updateResult.n === 0) {
                 return res.status(404).send({message: 'Could not process request'});
             }
+
+            let trip = await Trip.findById(idToDelete);
+            trip.pickups
+                .filter(pickup => pickup.status === 'STARTED')
+                .forEach(async pickup => await PickupRequest.updateOne({_id: pickup._id}, {status: 'PLANNED'}));
             return res.send({message: 'Trip over'});
         }
     );

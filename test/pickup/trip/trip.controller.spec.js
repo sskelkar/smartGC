@@ -220,9 +220,11 @@ describe('Trip tests', () => {
             .expect(404, {message: 'Could not process request'});
     });
 
-    it('should set the trip status to completed', async () => {
+    it('should cancel a trip', async () => {
         //given
-        let trip = await Trip.create({collectorId, status: 'ACTIVE', pickups: [pickupRequest]});
+        let donePickup = await PickupRequest.create({...pickupRequest, status: 'DONE'});
+        let notYetDonePickup = await PickupRequest.create(pickupRequest);
+        let trip = await Trip.create({collectorId, status: 'ACTIVE', pickups: [donePickup._doc, notYetDonePickup._doc]});
 
         //when
         await request(app)
@@ -231,7 +233,13 @@ describe('Trip tests', () => {
             .expect(200, {message: 'Trip over'});
 
         let completed = await Trip.findById(trip._id);
-        verifyTrip({...trip._doc, status: 'COMPLETED'}, completed._doc)
+        verifyTrip({...trip._doc, status: 'COMPLETED'}, completed._doc);
+
+        let alreadyDonePickup = await PickupRequest.findById(donePickup._id);
+        expect(alreadyDonePickup.status).to.equal('DONE');
+
+        let replannedPickup = await PickupRequest.findById(notYetDonePickup._id);
+        expect(replannedPickup.status).to.equal('PLANNED');
     });
 
     function verifyTrip(expected, actual) {
