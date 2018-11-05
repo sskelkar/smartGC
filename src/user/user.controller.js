@@ -24,11 +24,11 @@ async function updatePickupRequestsFor(residentId) {
     );
 }
 
+//db.trips.update({"pickups._id":ObjectId("5bd9ebeb735d02060a829370")}, {$set:{"pickups.$.status": "STARTED"}})
 async function updateTripsThatHaveThisResident(residentId) {
     let trip = await Trip.findOne({
         status: 'ACTIVE',
-        'pickups.residentId': residentId,
-        'pickups.status': 'STARTED'
+        'pickups.residentId': residentId
     });
     let pickups = trip.pickups;
     let indexToUpdate = pickups.findIndex(pickup => pickup.residentId === residentId);
@@ -39,7 +39,6 @@ async function updateTripsThatHaveThisResident(residentId) {
 export const addKarmaPoints = (req, res) => {
     const id = req.params.id;
     const karma = req.body.karma;
-
     User.findOne({_id: id, role: 'RESIDENT'}, async (err, user) => {
         if (err || user == null) {
             return res.status(400).send({message: 'Resident not found'});

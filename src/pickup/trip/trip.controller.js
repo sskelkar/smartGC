@@ -18,7 +18,11 @@ export const getActiveTripForCollector = (req, res) => {
 export const getActiveTripForResident = (req, res) => {
     let residentId = req.params.residentId;
     let callback = (err, trip) => {
-        if (err || trip == null || trip.pickups.length === 0) {
+        if (err || trip == null) {
+            return res.status(404).send({message: 'No active trip found'});
+        }
+        let pickup = trip.pickups.find(pickup => pickup.residentId === residentId);
+        if(pickup.status !== 'STARTED') {
             return res.status(404).send({message: 'No active trip found'});
         }
         let pickupsTillThisResident = trip.pickups.slice(0, 1 + trip.pickups.findIndex(pickup => pickup.residentId === residentId));
@@ -31,8 +35,7 @@ export const getActiveTripForResident = (req, res) => {
 function getActiveTripQueryForResident(residentId, callback) {
     return Trip.findOne({
         status: 'ACTIVE',
-        'pickups.residentId': residentId,
-        'pickups.status': 'STARTED'
+        'pickups.residentId': residentId
     }, callback);
 }
 
@@ -41,6 +44,10 @@ export const getCollectorLocationFromTrip = async (req, res) => {
     let trip;
     try {
         trip = await getActiveTripQueryForResident(residentId);
+        let pickup = trip.pickups.find(pickup => pickup.residentId === residentId);
+        if(pickup.status !== 'STARTED') {
+            return res.status(404).send({message: 'No active trip found'});
+        }
         res.send(trip.collectorLocation)
     } catch(e) {
         res.status(404).send({message: 'No active trip found'});

@@ -42,12 +42,12 @@ describe('User tests', () => {
             "shift": "MORNING",
             "status": "STARTED"
         };
-        let pickupStarted = await PickupRequest.create(pickupRequestJson);
-        let pickupPlanned = await PickupRequest.create({...pickupRequestJson, status: "PLANNED"});
+        let pickup1 = await PickupRequest.create(pickupRequestJson);
+        let pickup2 = await PickupRequest.create({...pickupRequestJson, residentId: "99"});
         let trip = await Trip.create({
             collectorId: "1",
             status: 'ACTIVE',
-            pickups: [pickupRequestJson, {...pickupRequestJson, residentId: "99"}]
+            pickups: [pickup1._doc, pickup2._doc]
         });
 
         //when
@@ -61,13 +61,14 @@ describe('User tests', () => {
         const updatedUser = await User.findById(createdUser._id);
         expect(updatedUser.karmaPoints).to.equal(400);
 
-        let updatedPickup = await PickupRequest.findById(pickupStarted._id);
-        let notUpdatedPickup = await PickupRequest.findById(pickupPlanned._id);
+        let updatedPickup = await PickupRequest.findById(pickup1._id);
+        let notUpdatedPickup = await PickupRequest.findById(pickup2._id);
         expect(updatedPickup.status).to.equal('DONE');
-        expect(notUpdatedPickup.status).to.equal('PLANNED');
+        expect(notUpdatedPickup.status).to.equal('STARTED');
 
         let updatedTrip = await Trip.findById(trip._id);
         expect(updatedTrip.pickups[0].status).to.equal('DONE');
+        expect(updatedTrip.pickups[1].status).to.equal('STARTED');
     });
 
     it('should throw 400 if user is not a resident', async () => {
